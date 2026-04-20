@@ -41,7 +41,7 @@ youtube-video-summarizer/
 │   └── telegram_client.py          # Telegram Bot API integration
 ├── auth/
 │   └── get_refresh_token.py         # one-time local script to obtain OAuth refresh token
-├── seen_videos.json                 # persisted list of processed video IDs
+├── seen_videos.json                 # persisted list of processed video IDs — format: ["id1", "id2", ...]
 ├── requirements.txt
 └── .env.example                     # documents required env vars (no actual secrets)
 ```
@@ -62,7 +62,7 @@ youtube-video-summarizer/
 
 ### `src/summarizer.py`
 - Takes video metadata (`title`, `channel`) and transcript text
-- Calls Claude API (`claude-haiku-4-5-20251001`) to generate a concise Bengali summary
+- Calls Claude API (`claude-haiku-4-5-20251001`) to generate a Bengali summary of 3–5 sentences (~80–120 words)
 - Returns the Bengali summary string
 
 ### `src/telegram_client.py`
