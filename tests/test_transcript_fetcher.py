@@ -3,7 +3,7 @@ from youtube_transcript_api import NoTranscriptFound, TranscriptsDisabled
 from src.transcript_fetcher import fetch_transcript
 
 
-@patch("src.transcript_fetcher.YouTubeTranscriptApi.list")
+@patch("src.transcript_fetcher.YouTubeTranscriptApi.list_transcripts", create=True)
 def test_fetch_transcript_returns_joined_text(mock_list):
     mock_transcript = MagicMock()
     mock_transcript.is_generated = False
@@ -18,7 +18,7 @@ def test_fetch_transcript_returns_joined_text(mock_list):
     assert result == "Hello World"
 
 
-@patch("src.transcript_fetcher.YouTubeTranscriptApi.list")
+@patch("src.transcript_fetcher.YouTubeTranscriptApi.list_transcripts", create=True)
 def test_fetch_transcript_prefers_manual_over_auto(mock_list):
     manual = MagicMock()
     manual.is_generated = False
@@ -35,7 +35,7 @@ def test_fetch_transcript_prefers_manual_over_auto(mock_list):
     assert result == "Manual"
 
 
-@patch("src.transcript_fetcher.YouTubeTranscriptApi.list")
+@patch("src.transcript_fetcher.YouTubeTranscriptApi.list_transcripts", create=True)
 def test_fetch_transcript_falls_back_to_auto_captions(mock_list):
     auto = MagicMock()
     auto.is_generated = True
@@ -47,7 +47,7 @@ def test_fetch_transcript_falls_back_to_auto_captions(mock_list):
     assert result == "Auto caption text"
 
 
-@patch("src.transcript_fetcher.YouTubeTranscriptApi.list")
+@patch("src.transcript_fetcher.YouTubeTranscriptApi.list_transcripts", create=True)
 def test_fetch_transcript_returns_none_when_disabled(mock_list):
     mock_list.side_effect = TranscriptsDisabled("abc123")
 
@@ -56,7 +56,7 @@ def test_fetch_transcript_returns_none_when_disabled(mock_list):
     assert result is None
 
 
-@patch("src.transcript_fetcher.YouTubeTranscriptApi.list")
+@patch("src.transcript_fetcher.YouTubeTranscriptApi.list_transcripts", create=True)
 def test_fetch_transcript_returns_none_when_not_found(mock_list):
     mock_list.side_effect = NoTranscriptFound("abc123", [], [])
 
@@ -65,7 +65,7 @@ def test_fetch_transcript_returns_none_when_not_found(mock_list):
     assert result is None
 
 
-@patch("src.transcript_fetcher.YouTubeTranscriptApi.list")
+@patch("src.transcript_fetcher.YouTubeTranscriptApi.list_transcripts", create=True)
 def test_fetch_transcript_returns_none_on_unexpected_error(mock_list):
     mock_list.side_effect = Exception("network error")
 

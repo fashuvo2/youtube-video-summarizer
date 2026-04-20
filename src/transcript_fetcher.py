@@ -1,10 +1,11 @@
-from typing import Optional
+from __future__ import annotations
+
 from youtube_transcript_api import YouTubeTranscriptApi, NoTranscriptFound, TranscriptsDisabled
 
 
-def fetch_transcript(video_id: str) -> Optional[str]:
+def fetch_transcript(video_id: str) -> str | None:
     try:
-        transcript_list = YouTubeTranscriptApi.list(video_id)
+        transcript_list = YouTubeTranscriptApi.list_transcripts(video_id)
 
         manual = [t for t in transcript_list if not t.is_generated]
         auto = [t for t in transcript_list if t.is_generated]
