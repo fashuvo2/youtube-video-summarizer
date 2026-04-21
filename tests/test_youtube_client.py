@@ -22,9 +22,9 @@ def test_get_watch_later_videos_returns_video_list(mock_get_service):
     videos = get_watch_later_videos()
 
     assert videos == [{"id": "abc123", "title": "Test Video", "channel": "Test Channel"}]
-    # Verify it uses the hardcoded WL playlist ID
+    # Verify it uses the playlist ID from the environment variable
     mock_service.playlistItems.return_value.list.assert_called_once_with(
-        part="snippet", playlistId="WL", maxResults=50
+        part="snippet", playlistId="PLtest123", maxResults=50
     )
 
 

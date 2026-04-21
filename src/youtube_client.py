@@ -22,9 +22,7 @@ def get_youtube_service():
 def get_watch_later_videos() -> list[dict]:
     service = get_youtube_service()
 
-    # Watch Later playlist ID is always "WL" for the authenticated user.
-    # The YouTube Data API no longer exposes it via channels().list() relatedPlaylists.
-    playlist_id = "WL"
+    playlist_id = os.environ["YOUTUBE_PLAYLIST_ID"]
 
     videos = []
     page_token = None

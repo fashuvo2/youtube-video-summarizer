@@ -9,3 +9,4 @@ def env_vars(monkeypatch):
     monkeypatch.setenv("ANTHROPIC_API_KEY", "test_api_key")
     monkeypatch.setenv("TELEGRAM_BOT_TOKEN", "1234567890:ABCdefGHIjklMNOpqrSTUvwxYZ")
     monkeypatch.setenv("TELEGRAM_CHANNEL_USERNAME", "@testchannel")
+    monkeypatch.setenv("YOUTUBE_PLAYLIST_ID", "PLtest123")
