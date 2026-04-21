@@ -46,3 +46,14 @@ def test_summarize_truncates_long_transcript_to_8000_chars(mock_get_client):
     # The transcript slice passed to the API must be at most 8000 chars
     assert long_transcript[8000:] not in prompt
     assert long_transcript[:100] in prompt
+
+
+@patch("src.summarizer.get_client")
+def test_summarize_raises_on_empty_content(mock_get_client):
+    import pytest
+    mock_client = MagicMock()
+    mock_get_client.return_value = mock_client
+    mock_client.messages.create.return_value = MagicMock(content=[])
+
+    with pytest.raises(RuntimeError, match="empty response"):
+        summarize_in_bengali("Title", "Channel", "transcript")

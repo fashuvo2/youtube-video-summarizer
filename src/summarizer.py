@@ -27,4 +27,6 @@ def summarize_in_bengali(title: str, channel: str, transcript: str) -> str:
         ],
     )
 
+    if not message.content:
+        raise RuntimeError("Claude returned an empty response — no content blocks in message.")
     return message.content[0].text
