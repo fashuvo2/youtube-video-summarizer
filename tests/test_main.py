@@ -22,6 +22,16 @@ def test_load_seen_videos_returns_empty_set_if_file_missing(tmp_path, monkeypatc
     assert result == set()
 
 
+def test_load_seen_videos_returns_empty_set_on_corrupt_file(tmp_path, monkeypatch):
+    seen_file = tmp_path / "seen_videos.json"
+    seen_file.write_text("not valid json")
+    monkeypatch.chdir(tmp_path)
+
+    result = load_seen_videos()
+
+    assert result == set()
+
+
 def test_save_seen_videos_writes_sorted_json(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
 
@@ -29,6 +39,18 @@ def test_save_seen_videos_writes_sorted_json(tmp_path, monkeypatch):
 
     content = json.loads((tmp_path / "seen_videos.json").read_text())
     assert content == ["aaa", "mmm", "zzz"]
+
+
+def test_save_seen_videos_raises_on_write_failure(tmp_path, monkeypatch):
+    # Make the directory read-only so the write fails
+    monkeypatch.chdir(tmp_path)
+    tmp_path.chmod(0o444)
+
+    try:
+        with pytest.raises(IOError):
+            save_seen_videos({"vid1"})
+    finally:
+        tmp_path.chmod(0o755)  # restore so tmp_path cleanup works
 
 
 def test_format_message_escapes_html_special_chars():

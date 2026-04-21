@@ -11,14 +11,21 @@ SEEN_VIDEOS_PATH = "seen_videos.json"
 
 def load_seen_videos() -> set:
     if os.path.exists(SEEN_VIDEOS_PATH):
-        with open(SEEN_VIDEOS_PATH) as f:
-            return set(json.load(f))
+        try:
+            with open(SEEN_VIDEOS_PATH) as f:
+                return set(json.load(f))
+        except (json.JSONDecodeError, ValueError) as e:
+            print(f"Warning: could not parse {SEEN_VIDEOS_PATH} ({e}), starting fresh.")
     return set()
 
 
 def save_seen_videos(seen: set) -> None:
-    with open(SEEN_VIDEOS_PATH, "w") as f:
-        json.dump(sorted(seen), f, indent=2)
+    try:
+        with open(SEEN_VIDEOS_PATH, "w") as f:
+            json.dump(sorted(seen), f, indent=2)
+    except IOError as e:
+        print(f"Error: could not write {SEEN_VIDEOS_PATH}: {e}")
+        raise
 
 
 def format_message(video: dict, summary: str) -> str:
