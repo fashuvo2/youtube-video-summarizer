@@ -1,5 +1,4 @@
 from unittest.mock import MagicMock, patch
-import pytest
 from src.youtube_client import get_watch_later_videos
 
 
@@ -8,9 +7,6 @@ def test_get_watch_later_videos_returns_video_list(mock_get_service):
     mock_service = MagicMock()
     mock_get_service.return_value = mock_service
 
-    mock_service.channels.return_value.list.return_value.execute.return_value = {
-        "items": [{"contentDetails": {"relatedPlaylists": {"watchLater": "WLxyz"}}}]
-    }
     mock_service.playlistItems.return_value.list.return_value.execute.return_value = {
         "items": [
             {
@@ -26,16 +22,16 @@ def test_get_watch_later_videos_returns_video_list(mock_get_service):
     videos = get_watch_later_videos()
 
     assert videos == [{"id": "abc123", "title": "Test Video", "channel": "Test Channel"}]
+    # Verify it uses the hardcoded WL playlist ID
+    mock_service.playlistItems.return_value.list.assert_called_once_with(
+        part="snippet", playlistId="WL", maxResults=50
+    )
 
 
 @patch("src.youtube_client.get_youtube_service")
 def test_get_watch_later_videos_handles_pagination(mock_get_service):
     mock_service = MagicMock()
     mock_get_service.return_value = mock_service
-
-    mock_service.channels.return_value.list.return_value.execute.return_value = {
-        "items": [{"contentDetails": {"relatedPlaylists": {"watchLater": "WLxyz"}}}]
-    }
 
     def playlist_side_effect(**kwargs):
         mock = MagicMock()
@@ -80,9 +76,6 @@ def test_get_watch_later_videos_handles_missing_channel_title(mock_get_service):
     mock_service = MagicMock()
     mock_get_service.return_value = mock_service
 
-    mock_service.channels.return_value.list.return_value.execute.return_value = {
-        "items": [{"contentDetails": {"relatedPlaylists": {"watchLater": "WLxyz"}}}]
-    }
     mock_service.playlistItems.return_value.list.return_value.execute.return_value = {
         "items": [
             {
@@ -98,14 +91,3 @@ def test_get_watch_later_videos_handles_missing_channel_title(mock_get_service):
     videos = get_watch_later_videos()
 
     assert videos[0]["channel"] == "Unknown Channel"
-
-
-@patch("src.youtube_client.get_youtube_service")
-def test_get_watch_later_videos_raises_on_empty_channel_response(mock_get_service):
-    mock_service = MagicMock()
-    mock_get_service.return_value = mock_service
-
-    mock_service.channels.return_value.list.return_value.execute.return_value = {"items": []}
-
-    with pytest.raises(RuntimeError, match="No YouTube channel found"):
-        get_watch_later_videos()

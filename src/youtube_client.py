@@ -22,14 +22,9 @@ def get_youtube_service():
 def get_watch_later_videos() -> list[dict]:
     service = get_youtube_service()
 
-    channels_resp = service.channels().list(part="contentDetails", mine=True).execute()
-    items = channels_resp.get("items", [])
-    if not items:
-        raise RuntimeError(
-            "No YouTube channel found for the authenticated account. "
-            "Check your GOOGLE_REFRESH_TOKEN, GOOGLE_CLIENT_ID, and GOOGLE_CLIENT_SECRET."
-        )
-    playlist_id = items[0]["contentDetails"]["relatedPlaylists"]["watchLater"]
+    # Watch Later playlist ID is always "WL" for the authenticated user.
+    # The YouTube Data API no longer exposes it via channels().list() relatedPlaylists.
+    playlist_id = "WL"
 
     videos = []
     page_token = None
